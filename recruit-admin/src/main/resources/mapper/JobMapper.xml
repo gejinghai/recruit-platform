@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.recruit.mapper.JobMapper">
+
+    <resultMap id="BaseResultMap" type="com.recruit.entity.JobInfo">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="company_name" property="companyName"/>
+        <result column="salary" property="salary"/>
+        <result column="work_type" property="workType"/>
+        <result column="work_time" property="workTime"/>
+        <result column="welfare" property="welfare"/>
+        <result column="description" property="description"/>
+        <result column="requirements" property="requirements"/>
+        <result column="collection_time" property="collectionTime"/>
+        <result column="address" property="address"/>
+        <result column="status" property="status"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="is_top" property="isTop"/>
+        <result column="contact_type" property="contactType"/>
+        <result column="contact_value" property="contactValue"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT * FROM job_info
+        <where>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR company_name LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY is_top DESC, create_time DESC
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM job_info WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.recruit.entity.JobInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO job_info (title, company_name, salary, work_type, work_time, welfare,
+                             description, requirements, collection_time, address, status, view_count, is_top,
+                             contact_type, contact_value)
+        VALUES (#{title}, #{companyName}, #{salary}, #{workType}, #{workTime}, #{welfare},
+                #{description}, #{requirements}, #{collectionTime}, #{address}, #{status}, #{viewCount}, #{isTop},
+                #{contactType}, #{contactValue})
+    </insert>
+
+    <update id="update" parameterType="com.recruit.entity.JobInfo">
+        UPDATE job_info
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="companyName != null">company_name = #{companyName},</if>
+            <if test="salary != null">salary = #{salary},</if>
+            <if test="workType != null">work_type = #{workType},</if>
+            <if test="workTime != null">work_time = #{workTime},</if>
+            <if test="welfare != null">welfare = #{welfare},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="requirements != null">requirements = #{requirements},</if>
+            <if test="collectionTime != null">collection_time = #{collectionTime},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="isTop != null">is_top = #{isTop},</if>
+            <if test="contactType != null">contact_type = #{contactType},</if>
+            <if test="contactValue != null">contact_value = #{contactValue},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM job_info WHERE id = #{id}
+    </delete>
+
+    <update id="updateViewCount">
+        UPDATE job_info SET view_count = view_count + 1 WHERE id = #{id}
+    </update>
+
+    <update id="updateTop">
+        UPDATE job_info SET is_top = #{isTop} WHERE id = #{id}
+    </update>
+
+</mapper>

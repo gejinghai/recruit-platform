@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.recruit.mapper.AdContentMapper">
+
+    <resultMap id="BaseResultMap" type="com.recruit.entity.AdContent">
+        <id column="id" property="id"/>
+        <result column="position_id" property="positionId"/>
+        <result column="title" property="title"/>
+        <result column="image_url" property="imageUrl"/>
+        <result column="link_url" property="linkUrl"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="status" property="status"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="selectByPositionId" resultMap="BaseResultMap">
+        SELECT * FROM ad_content
+        WHERE position_id = #{positionId}
+        ORDER BY sort_order DESC
+    </select>
+
+    <select id="selectByPositionKey" resultMap="BaseResultMap">
+        SELECT ac.* FROM ad_content ac
+        INNER JOIN ad_position ap ON ac.position_id = ap.id
+        WHERE ap.position_key = #{positionKey}
+        AND ac.status = 1
+        AND (ac.start_time IS NULL OR ac.start_time &lt;= NOW())
+        AND (ac.end_time IS NULL OR ac.end_time &gt;= NOW())
+        ORDER BY ac.sort_order DESC
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT ac.*, ap.position_key FROM ad_content ac
+        INNER JOIN ad_position ap ON ac.position_id = ap.id
+        ORDER BY ac.position_id, ac.sort_order DESC
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM ad_content WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.recruit.entity.AdContent" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ad_content (position_id, title, image_url, link_url, sort_order, status, start_time, end_time)
+        VALUES (#{positionId}, #{title}, #{imageUrl}, #{linkUrl}, #{sortOrder}, #{status}, #{startTime}, #{endTime})
+    </insert>
+
+    <update id="update" parameterType="com.recruit.entity.AdContent">
+        UPDATE ad_content
+        <set>
+            <if test="positionId != null">position_id = #{positionId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+            <if test="linkUrl != null">link_url = #{linkUrl},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM ad_content WHERE id = #{id}
+    </delete>
+
+</mapper>
