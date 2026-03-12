@@ -33,3 +33,7 @@ logs/
 # Temporary files
 *.tmp
 *.temp
+
+# Deploy (production files)
+deploy/html/
+deploy/ssl/

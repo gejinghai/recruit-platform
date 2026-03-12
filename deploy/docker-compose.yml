@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # 后端API
+  recruit-api:
+    image: openjdk:17-jdk
+    container_name: recruit-api
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./app.jar:/app/app.jar
+    working_dir: /app
+    command: java -jar -Xms256m -Xmx512m app.jar
+    environment:
+      - SPRING_DATASOURCE_HOST=mysql
+      - SPRING_DATASOURCE_PORT=3306
+      - SPRING_DATASOURCE_NAME=recruit_db
+      - SPRING_DATASOURCE_USERNAME=recruit
+      - SPRING_DATASOURCE_PASSWORD=recruit123
+    extra_hosts:
+      - "mysql:172.20.0.4"
+    networks:
+      - recruit-network
+
+  # Nginx前端
+  nginx:
+    image: nginx:alpine
+    container_name: recruit-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./html:/usr/share/nginx/html:ro
+      - ./logs:/var/log/nginx
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - recruit-api
+    networks:
+      - recruit-network
+
+networks:
+  recruit-network:
+    external: true
+    name: recruit_recruit-network

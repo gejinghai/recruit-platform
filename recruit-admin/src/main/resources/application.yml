@@ -6,9 +6,9 @@ spring:
     name: recruit-admin
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/recruit_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-    username: root
-    password: gjh910615
+    url: jdbc:mysql://${SPRING_DATASOURCE_HOST:mysql}:${SPRING_DATASOURCE_PORT:3306}/${SPRING_DATASOURCE_NAME:recruit_db}?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${SPRING_DATASOURCE_USERNAME:recruit}
+    password: ${SPRING_DATASOURCE_PASSWORD:recruit123}
   servlet:
     multipart:
       max-file-size: 10MB
@@ -19,4 +19,3 @@ mybatis:
   type-aliases-package: com.recruit.entity
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
